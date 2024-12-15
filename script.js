@@ -69,7 +69,9 @@ const getComputerChoice = () => {
 
 // 2. get human choice
 const getHumanChoice = () => {
-  return prompt("Choice between: Rock, Paper, Scissors").toLowerCase();
+  const value = prompt("Choice between: Rock, Paper, Scissors");
+  if (value) return value.toLowerCase();
+  else return;
 };
 
 const playGame = () => {
@@ -135,4 +137,4 @@ const playGame = () => {
   else console.log("Error!");
 };
 
-playGame();
+if (getHumanChoice()) playGame();
