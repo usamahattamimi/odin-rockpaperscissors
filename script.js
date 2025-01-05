@@ -1,68 +1,80 @@
-// 1. get computer choice
-const getComputerChoice = () => {
-  const randomNumber = Math.floor(Math.random() * 3) + 1;
+let round = 1;
+let humanScore = 0;
+let computerScore = 0;
 
-  if (randomNumber === 1) return "rock";
-  else if (randomNumber === 2) return "paper";
-  else return "scissors";
+const getComputerChoice = () => {
+  const choices = ["rock", "paper", "scissors"];
+  return choices[Math.floor(Math.random() * 3)];
 };
 
-// play per round
-const playRound = ({ target: { innerText } }) => {
-  const humanChoice = innerText.toLowerCase();
+const disableButtons = () => {
+  buttons.forEach((button) => (button.disabled = true));
+};
+
+const resetGame = () => {
+  round = 1;
+  humanScore = 0;
+  computerScore = 0;
+  resultDiv.innerHTML = "";
+  buttons.forEach((button) => (button.disabled = false));
+};
+
+const checkGame = () => {
+  if (humanScore === 5 || computerScore === 5) {
+    const hWinner = document.createElement("h2");
+
+    if (humanScore === computerScore) {
+      hWinner.innerText = `Game Finish, It's Draw!`;
+    } else if (humanScore > computerScore) {
+      hWinner.innerText = `Game Finish, Human Wins!`;
+    } else {
+      hWinner.innerText = `Game Finish, Computer Wins!`;
+    }
+
+    resultDiv.append(hWinner);
+    disableButtons();
+    const restartButton = document.createElement("button");
+    restartButton.innerText = "Restart Game";
+    restartButton.addEventListener("click", resetGame);
+    resultDiv.append(restartButton);
+  }
+};
+
+const playRound = ({ target: { innerText: humanChoice } }) => {
+  humanChoice = humanChoice.toLowerCase();
   const computerChoice = getComputerChoice();
 
-  if (humanChoice === computerChoice) {
-    console.log(`Human: ${humanChoice}, Computer: ${computerChoice}, Draw!`);
-    return "draw";
-  }
+  const hElement = document.createElement("h3");
+  const pElement = document.createElement("p");
 
-  if (
+  if (humanChoice === computerChoice) {
+    humanScore++;
+    computerScore++;
+    pElement.innerText = `Human: ${humanChoice}, Computer: ${computerChoice}, Draw!`;
+  } else if (
     (humanChoice === "rock" && computerChoice === "scissors") ||
     (humanChoice === "paper" && computerChoice === "rock") ||
     (humanChoice === "scissors" && computerChoice === "paper")
   ) {
-    console.log(
-      `Human: ${humanChoice}, Computer: ${computerChoice}, Human Wins!`
-    );
-    return "human";
+    humanScore++;
+    pElement.innerText = `Human: ${humanChoice}, Computer: ${computerChoice}, Human Wins!`;
   } else {
-    console.log(
-      `Human: ${humanChoice}, Computer: ${computerChoice}, Computer Wins!`
-    );
-    return "computer";
+    computerScore++;
+    pElement.innerText = `Human: ${humanChoice}, Computer: ${computerChoice}, Computer Wins!`;
   }
+
+  hElement.innerText = `Round ${round}`;
+  pElement.innerText += `\n Human score: ${humanScore}, Computer Score: ${computerScore}`;
+  resultDiv.append(hElement, pElement);
+  round++;
+
+  checkGame();
 };
 
-// make selector for buttons and get the value when clicked
 const buttons = document.querySelectorAll("button");
 
 for (let i = 0; i < buttons.length; i++) {
   buttons[i].addEventListener("click", playRound);
 }
 
-// // 4. declare how much round per game
-// const playGame = () => {
-//   let humanScore = 0;
-//   let computerScore = 0;
-
-//   for (let i = 0; i < totalRound; i++) {
-//     const result = playRound(getHumanChoice(), getComputerChoice());
-
-//     if (result === "human") humanScore++;
-//     else if (result === "computer") computerScore++;
-//   }
-
-//   if (humanScore > computerScore)
-//     console.log(
-//       `Human Score: ${humanScore}, Computer Score: ${computerScore}, Human Wins!`
-//     );
-//   else if (humanScore < computerScore)
-//     console.log(
-//       `Human Score: ${humanScore}, Computer Score: ${computerScore}, Computer Wins!`
-//     );
-//   else
-//     console.log(
-//       `Human Score: ${humanScore}, Computer Score: ${computerScore}, It's Draw!`
-//     );
-// };
+const resultDiv = document.querySelector(".result");
